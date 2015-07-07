@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 # -*- coding: UTF-8 -*-
 
+require "uri"
 require "rexml/document"
 
 # TODO tests
@@ -48,7 +49,7 @@ class Ruleset
   end
 
   def match? host
-    !exclusions_match?(host) && targets_match?(host)
+    host.start_with?("http://") && !exclusions_match?(host) && targets_match?(host)
   end
 
   def exclusions_match?(host)
@@ -56,7 +57,8 @@ class Ruleset
   end
 
   def targets_match?(host)
-    @rules.any? { |r, _| r =~ host }
+    host = URI.parse(host).host || host
+    @targets.any? { |t| t =~ host }
   end
 
   private
@@ -70,9 +72,22 @@ class Ruleset
 
     s = Regexp.escape(s)
 
-    s = "[.\w]*#{s}" if left_wildcard
-    s << "\w*" if right_wildcard
+    s = "[.\\w]*#{s}" if left_wildcard
+    s << "\\w*" if right_wildcard
 
     Regexp.new "^#{s}$"
+  end
+end
+
+# not optimized
+class BatchRuleset
+  attr_reader :rulesets
+
+  def initialize directory
+    @rulesets = Dir["#{directory}/*.xml"].map { |f| Ruleset.new(File.read f) }
+  end
+
+  def ruleset_for url
+    @rulesets.find { |r| r.match? url }
   end
 end
