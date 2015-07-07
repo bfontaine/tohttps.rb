@@ -20,13 +20,19 @@ Then load a rule like this:
 require "./tohttps"
 
 # replace with a valid filepath
-r = RuleSet.new File.read("path/to/https-everywhere/rules/the-rule.xml")
+r = Ruleset.new File.read("path/to/https-everywhere/rules/the-rule.xml")
 
-# check if an URL matches the rule
+# check if a URL matches the rule
 r.match? "http://example.com/foo"
 
-# rewrite an URL using the rule
+# rewrite a URL using the rule
 r.replace "http://example.com/foo"
+
+# load all the rules from a directory (warning: it takes a few minutes)
+b = BatchRuleset.new "path/to/https-everywhere/rules"
+
+# returns the first rule matched by the URL
+b.ruleset_for "http://example.com"
 ```
 
 Note: this is a quick &amp; dirty script for now, it doesn’t have unit tests
