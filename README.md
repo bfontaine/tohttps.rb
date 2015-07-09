@@ -26,7 +26,7 @@ r = Ruleset.new File.read("path/to/https-everywhere/rules/the-rule.xml")
 r.match? "http://example.com/foo"
 
 # rewrite a URL using the rule
-r.replace "http://example.com/foo"
+r.rewrite "http://example.com/foo"
 
 # load all the rules from a directory (warning: it takes a few minutes)
 b = BatchRuleset.new "path/to/https-everywhere/rules"

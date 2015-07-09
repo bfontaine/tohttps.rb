@@ -35,7 +35,7 @@ class Ruleset
     end
   end
 
-  def replace url
+  def rewrite url
     return url unless match? url
 
     rule = @rules.find { |r, _| r =~ url }
